@@ -1,0 +1,16 @@
+.info-card {
+   margin: 30px;
+   padding: 10px;
+   border: 2px solid gray;
+   border-radius: 10px;
+   width: 400px;
+   box-shadow: 10px 5px 5px lightgray;
+
+   .info-label {
+      font-weight: bold;;
+   }
+
+   td {
+      padding: 10px;
+   }
+}
