@@ -4,6 +4,6 @@ const endPointConfig = {
   fileServiceOrigin: "https://sandbox-api.invicara.com",
   datasourceServiceOrigin: "https://sandbox-api.invicara.com",
   graphicsServiceOrigin: "https://sandbox-api.invicara.com",
-  baseRoot: "http://localhost:8084",
+  baseRoot: "https://twinit-tmc.web.app",
   applicationId: "fb99b33f-964d-4c8e-ae86-9230a93bba3d",
 };
