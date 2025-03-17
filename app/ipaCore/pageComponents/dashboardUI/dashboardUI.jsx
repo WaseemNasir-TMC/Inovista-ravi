@@ -16,13 +16,12 @@ import {
   Article,
   Search,
   LocalFireDepartment,
-  People,
 } from "@mui/icons-material";
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import PackagesMall from "./img/PackagesMall.png";
 import Heatmap from "./components/Heatmap";
-import HeatmapMall from "./components/Heatmap";
 
+// Mock data for graphs
 const mockData = {
   electrical: [
     { month: "Jan", value: 90000 },
@@ -58,6 +57,7 @@ const mockData = {
   ],
 };
 
+// Navigation handler for images and buttons
 const handleImageClick = () => {
   let currentUrl = window.location.href;
   if (currentUrl.endsWith("#/dashboardUI")) {
@@ -68,16 +68,55 @@ const handleImageClick = () => {
   window.location.href = currentUrl;
 };
 
+// Common style constants
+const commonPaperStyle = {
+  bgcolor: "grey.100",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+};
+
+const commonImageStyle = {
+  width: "100%",
+  height: "auto",
+  maxHeight: "250px",
+  objectFit: "cover",
+};
+
+// Reusable ImageCard component for a clickable image wrapped in Paper
+const ImageCard = ({ src, alt, onClick }) => (
+  <Paper sx={commonPaperStyle} onClick={onClick}>
+    <img src={src} alt={alt} style={commonImageStyle} />
+  </Paper>
+);
+
+// Reusable ActionButton component for the buttons on the right-hand side
+const ActionButton = ({ label, icon: Icon, bgColor, hoverColor, ...rest }) => (
+  <Button
+    variant="contained"
+    startIcon={<Icon />}
+    sx={{
+      bgcolor: bgColor,
+      width: "100%",
+      "&:hover": { bgcolor: hoverColor },
+    }}
+    {...rest}
+  >
+    {label}
+  </Button>
+);
+
+// MetricCard component displays a card with a chart
 const MetricCard = ({ title, value, unit, color, icon: Icon, data }) => (
   <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
     <CardContent sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
       <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-        <Icon sx={{ color: color, mr: 1 }} />
+        <Icon sx={{ color, mr: 1 }} />
         <Typography variant="h6" component="div">
           {title}
         </Typography>
       </Box>
-      <Typography variant="h4" component="div" sx={{ color: color, mb: 1 }}>
+      <Typography variant="h4" component="div" sx={{ color, mb: 1 }}>
         {value.toLocaleString()} {unit}
       </Typography>
       <Typography variant="body2" color="text.secondary">
@@ -116,98 +155,48 @@ const MetricCard = ({ title, value, unit, color, icon: Icon, data }) => (
 );
 
 const SustainabilityDashboard = () => {
+  // Define action buttons in an array so we can DRY out their creation
+  const actionButtons = [
+    { label: "EPD Documents", icon: Article, bgColor: "#4caf50", hoverColor: "#388e3c" },
+    { label: "Traceability", icon: Search, bgColor: "#2196f3", hoverColor: "#1976d2" },
+    { label: "Fire Testing", icon: LocalFireDepartment, bgColor: "#ff9800", hoverColor: "#f57c00" },
+  ];
+
   return (
     <Box sx={{ p: 3 }}>
       <Grid container spacing={3} sx={{ mb: 4 }}>
+        {/* Left column: Heatmap */}
         <Grid item xs={12} md={3}>
           <Heatmap onClick={handleImageClick} />
         </Grid>
 
+        {/* Center column: Building image */}
         <Grid item xs={12} md={6}>
-          <Paper
-            sx={{
-              bgcolor: "grey.100",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <img
-              src={PackagesMall}
-              alt="Building"
-              style={{
-                width: "100%",
-                height: "auto",
-                maxHeight: "250px",
-                objectFit: "cover",
-              }}
-              onClick={handleImageClick}
-            />
-          </Paper>
+          <ImageCard src={PackagesMall} alt="Building" onClick={handleImageClick} />
         </Grid>
 
+        {/* Right column: Action buttons */}
         <Grid
           item
           xs={12}
           md={3}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
+          sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-              width: "100%",
-              maxWidth: 300,
-            }}
-          >
-            <Button
-              variant="contained"
-              startIcon={<Article />}
-              sx={{
-                bgcolor: "#4caf50",
-                width: "100%",
-                "&:hover": {
-                  bgcolor: "#388e3c",
-                },
-              }}
-            >
-              EPD Documents
-            </Button>
-            <Button
-              variant="contained"
-              startIcon={<Search />}
-              sx={{
-                bgcolor: "#2196f3",
-                width: "100%",
-                "&:hover": {
-                  bgcolor: "#1976d2",
-                },
-              }}
-            >
-              Traceability
-            </Button>
-            <Button
-              variant="contained"
-              startIcon={<LocalFireDepartment />}
-              sx={{
-                bgcolor: "#ff9800",
-                width: "100%",
-                "&:hover": {
-                  bgcolor: "#f57c00",
-                },
-              }}
-            >
-              Fire Testing
-            </Button>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, width: "100%", maxWidth: 300 }}>
+            {actionButtons.map((btn, index) => (
+              <ActionButton
+                key={index}
+                label={btn.label}
+                icon={btn.icon}
+                bgColor={btn.bgColor}
+                hoverColor={btn.hoverColor}
+              />
+            ))}
           </Box>
         </Grid>
       </Grid>
 
+      {/* Metrics grid */}
       <Grid container spacing={3}>
         <Grid item xs={12} md={3}>
           <MetricCard

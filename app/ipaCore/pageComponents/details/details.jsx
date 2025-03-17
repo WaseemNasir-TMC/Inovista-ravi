@@ -30,6 +30,8 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  AreaChart,
+  Area,
 } from "recharts";
 
 // ** Metrics Configuration (Removed Temperature, Air Quality, and Humidity) **
@@ -69,7 +71,7 @@ const baselineValues = {
   electrical: 10, // kWh
   batteryStorage: 25, // kWh
   machineEfficiency: 90, // %
-  carbonFootprint: 1.0,  // kg CO₂
+  carbonFootprint: 1.0, // kg CO₂
 };
 
 // ** Function to fluctuate value by 1 to 2 percent **
@@ -92,7 +94,7 @@ const generateGraphData = () =>
   ["Jan", "Feb", "Mar", "Apr", "May", "Jun"].map((month) => ({
     month,
     electrical: fluctuateValue(150), // around 150 kWh
-    machineUsage: fluctuateValue(70),  // around 70% usage
+    machineUsage: fluctuateValue(70), // around 70% usage
   }));
 
 const handleButtonClick = () => {
@@ -105,8 +107,61 @@ const handleButtonClick = () => {
   window.location.href = currentUrl;
 };
 
-// ** Metric Card Component **
-const MetricCard = ({ title, value, unit, color, icon: Icon }) => (
+// Move sensorReadingsConfig above its usage
+const sensorReadingsConfig = [
+  {
+    key: "pm01",
+    title: "PM1",
+    unit: "µg/m³",
+    icon: Cloud,
+    color: "#1976d2",
+  },
+  {
+    key: "pm02",
+    title: "PM2.5",
+    unit: "µg/m³",
+    icon: Cloud,
+    color: "#1976d2",
+  },
+  {
+    key: "pm10",
+    title: "PM10",
+    unit: "µg/m³",
+    icon: Cloud,
+    color: "#1976d2",
+  },
+  {
+    key: "atmp",
+    title: "Temperature",
+    unit: "°C",
+    icon: Thermostat,
+    color: "#ff9800",
+  },
+  {
+    key: "rhum",
+    title: "Humidity",
+    unit: "%",
+    icon: WaterDrop,
+    color: "#2196f3",
+  },
+  {
+    key: "rco2",
+    title: "CO₂",
+    unit: "ppm",
+    icon: Factory,
+    color: "#e53935",
+  },
+  {
+    key: "tvoc",
+    title: "TVOC",
+    unit: "ppb",
+    icon: InfoOutlined,
+    color: "#795548",
+  },
+];
+
+// ** Metric Card Component with Graph **
+const MetricCard = ({ title, value, unit, color, icon: Icon, graphData }) => (
   <Card
     sx={{
       height: "100%",
@@ -132,13 +187,125 @@ const MetricCard = ({ title, value, unit, color, icon: Icon }) => (
           {value.toFixed(2)} {unit}
         </Typography>
       </Fade>
+      <ResponsiveContainer width="100%" height={100}>
+        <AreaChart data={graphData}>
+          <defs>
+            <filter
+              id={`shadow-${title}`}
+              x="-20%"
+              y="-20%"
+              width="140%"
+              height="140%"
+            >
+              <feDropShadow
+                dx="2"
+                dy="2"
+                stdDeviation="3"
+                floodColor={color}
+                floodOpacity={0.5}
+              />
+            </filter>
+          </defs>
+          <Area
+            type="monotone"
+            dataKey="value"
+            stroke={color}
+            fill={color}
+            strokeWidth={2}
+            fillOpacity={0.3}
+            style={{ filter: `url(#shadow-${title})` }}
+          />
+          <XAxis hide />
+          <YAxis hide />
+        </AreaChart>
+      </ResponsiveContainer>
     </CardContent>
   </Card>
 );
 
-// ** Sensor Reading Card Component (Individual Cards) **
-// Now includes a prop 'updateKey' to force fade effect on every update.
-const SensorReadingCard = ({ title, value, unit, color, icon: Icon, updateKey }) => (
+// ** Sensor Reading Card Component with Graph **
+// const SensorReadingCard = ({
+//   title,
+//   value,
+//   unit,
+//   color,
+//   icon: Icon,
+//   updateKey,
+//   graphData,
+// }) => (
+//   <Card
+//     sx={{
+//       height: "100%",
+//       display: "flex",
+//       flexDirection: "column",
+//       p: 2,
+//       borderRadius: 2,
+//       boxShadow: 3,
+//       transition: "all 0.3s",
+//       ":hover": { transform: "scale(1.03)", boxShadow: 5 },
+//     }}
+//   >
+//     <CardContent>
+//       <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+//         <Icon sx={{ color, mr: 1 }} />
+//         <Typography variant="h6">{title}</Typography>
+//         <IconButton sx={{ ml: "auto" }}>
+//           <InfoOutlined fontSize="small" />
+//         </IconButton>
+//       </Box>
+//       <Fade in={true} key={updateKey} timeout={500}>
+//         <Typography variant="h4" sx={{ color, mb: 1, fontWeight: "bold" }}>
+//           {value !== undefined && value !== null ? value.toFixed(2) : "N/A"}{" "}
+//           {unit}
+//         </Typography>
+//       </Fade>
+//       <Box style={{ marginTop: "auto" }}>
+//         <ResponsiveContainer width="100%" height={100}>
+//           <AreaChart data={graphData}>
+//             <defs>
+//               <filter
+//                 id={`shadow-sensor-${title}`}
+//                 x="-20%"
+//                 y="-20%"
+//                 width="140%"
+//                 height="140%"
+//               >
+//                 <feDropShadow
+//                   dx="2"
+//                   dy="2"
+//                   stdDeviation="3"
+//                   floodColor={color}
+//                   floodOpacity={0.5}
+//                 />
+//               </filter>
+//             </defs>
+//             <Area
+//               type="monotone"
+//               dataKey="value"
+//               stroke={color}
+//               fill={color}
+//               strokeWidth={2}
+//               fillOpacity={0.3}
+//               style={{ filter: `url(#shadow-sensor-${title})` }}
+//             />
+//             <XAxis hide />
+//             <YAxis hide />
+//           </AreaChart>
+//         </ResponsiveContainer>{" "}
+//       </Box>
+//     </CardContent>
+//   </Card>
+// );
+
+const SensorReadingCard = ({
+  title,
+  value,
+  unit,
+  color,
+  icon: Icon,
+  updateKey,
+  graphData,
+}) => (
   <Card
     sx={{
       height: "100%",
@@ -151,7 +318,7 @@ const SensorReadingCard = ({ title, value, unit, color, icon: Icon, updateKey })
       ":hover": { transform: "scale(1.03)", boxShadow: 5 },
     }}
   >
-    <CardContent>
+    <CardContent sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
       <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
         <Icon sx={{ color, mr: 1 }} />
         <Typography variant="h6">{title}</Typography>
@@ -160,10 +327,49 @@ const SensorReadingCard = ({ title, value, unit, color, icon: Icon, updateKey })
         </IconButton>
       </Box>
       <Fade in={true} key={updateKey} timeout={500}>
-        <Typography variant="h4" sx={{ color, mb: 1, fontWeight: "bold" }}>
-          {value !== undefined && value !== null ? value.toFixed(2) : "N/A"} {unit}
+        <Typography
+          variant="h4"
+          sx={{ color, mb: 1, fontWeight: "bold" }}
+        >
+          {value !== undefined && value !== null ? value.toFixed(2) : "N/A"}{" "}
+          {unit}
         </Typography>
       </Fade>
+      {/* Spacer pushes the graph container to the bottom */}
+      <Box sx={{ mt: "auto" }}>
+        <ResponsiveContainer width="100%" height={100}>
+          <AreaChart data={graphData}>
+            <defs>
+              <filter
+                id={`shadow-sensor-${title}`}
+                x="-20%"
+                y="-20%"
+                width="140%"
+                height="140%"
+              >
+                <feDropShadow
+                  dx="2"
+                  dy="2"
+                  stdDeviation="3"
+                  floodColor={color}
+                  floodOpacity={0.5}
+                />
+              </filter>
+            </defs>
+            <Area
+              type="monotone"
+              dataKey="value"
+              stroke={color}
+              fill={color}
+              strokeWidth={4}
+              fillOpacity={0.2}
+              style={{ filter: `url(#shadow-sensor-${title})` }}
+            />
+            <XAxis hide />
+            <YAxis hide />
+          </AreaChart>
+        </ResponsiveContainer>
+      </Box>
     </CardContent>
   </Card>
 );
@@ -171,37 +377,68 @@ const SensorReadingCard = ({ title, value, unit, color, icon: Icon, updateKey })
 const Dashboard = () => {
   const [graphData, setGraphData] = useState(generateGraphData());
   const [metrics, setMetrics] = useState({});
+  const [metricsHistory, setMetricsHistory] = useState(() => {
+    const init = {};
+    Object.keys(baselineValues).forEach((key) => {
+      init[key] = [];
+    });
+    return init;
+  });
   const [sensorData, setSensorData] = useState(null);
+  const [sensorHistory, setSensorHistory] = useState(() => {
+    const init = {};
+    sensorReadingsConfig.forEach((reading) => {
+      init[reading.key] = [];
+    });
+    return init;
+  });
   const [sensorUpdate, setSensorUpdate] = useState(Date.now());
 
+  // ** Update Graph Data for Bar Chart every 5 seconds **
   useEffect(() => {
-    // Update graph data every 5 seconds
-    const graphInterval = setInterval(() => setGraphData(generateGraphData()), 5000);
+    const graphInterval = setInterval(
+      () => setGraphData(generateGraphData()),
+      5000
+    );
+    return () => clearInterval(graphInterval);
+  }, []);
 
-    // Update metric values every 5 seconds
+  // ** Update Metric Values and History every 5 seconds **
+  useEffect(() => {
+    // Set initial metrics and history
+    const initialMetrics = {};
+    const initialHistory = {};
+    Object.keys(baselineValues).forEach((key) => {
+      const val = fluctuateValue(baselineValues[key]);
+      initialMetrics[key] = val;
+      initialHistory[key] = [{ time: Date.now(), value: val }];
+    });
+    setMetrics(initialMetrics);
+    setMetricsHistory(initialHistory);
+
     const metricsInterval = setInterval(() => {
       const newMetrics = {};
       Object.keys(baselineValues).forEach((key) => {
         newMetrics[key] = fluctuateValue(baselineValues[key]);
       });
       setMetrics(newMetrics);
+      setMetricsHistory((oldHistory) => {
+        const newHistory = { ...oldHistory };
+        Object.keys(newMetrics).forEach((key) => {
+          const newEntry = { time: Date.now(), value: newMetrics[key] };
+          newHistory[key] = [...(newHistory[key] || []), newEntry];
+          // Limit history to last 12 updates
+          if (newHistory[key].length > 12)
+            newHistory[key] = newHistory[key].slice(-12);
+        });
+        return newHistory;
+      });
     }, 5000);
 
-    // Set initial metrics
-    const initialMetrics = {};
-    Object.keys(baselineValues).forEach((key) => {
-      initialMetrics[key] = fluctuateValue(baselineValues[key]);
-    });
-    setMetrics(initialMetrics);
-
-    // Cleanup intervals
-    return () => {
-      clearInterval(graphInterval);
-      clearInterval(metricsInterval);
-    };
+    return () => clearInterval(metricsInterval);
   }, []);
 
-  // ** Fetch sensor data from the API every 5 seconds **
+  // ** Fetch sensor data from the API every 5 seconds and update sensor history **
   useEffect(() => {
     const fetchSensorData = async () => {
       try {
@@ -210,7 +447,17 @@ const Dashboard = () => {
         );
         const data = await response.json();
         setSensorData(data);
-        // Update sensorUpdate even if data remains the same to trigger fade effect
+        setSensorHistory((oldHistory) => {
+          const newHistory = { ...oldHistory };
+          sensorReadingsConfig.forEach((reading) => {
+            const key = reading.key;
+            const newEntry = { time: Date.now(), value: data[key] };
+            newHistory[key] = [...(newHistory[key] || []), newEntry];
+            if (newHistory[key].length > 12)
+              newHistory[key] = newHistory[key].slice(-12);
+          });
+          return newHistory;
+        });
         setSensorUpdate(Date.now());
       } catch (error) {
         console.error("Error fetching sensor data:", error);
@@ -222,63 +469,14 @@ const Dashboard = () => {
     return () => clearInterval(sensorInterval);
   }, []);
 
-  // Configuration for individual sensor reading cards
-  const sensorReadingsConfig = [
-    {
-      key: "pm01",
-      title: "PM1",
-      unit: "µg/m³",
-      icon: Cloud,
-      color: "#1976d2",
-    },
-    {
-      key: "pm02",
-      title: "PM2.5",
-      unit: "µg/m³",
-      icon: Cloud,
-      color: "#1976d2",
-    },
-    {
-      key: "pm10",
-      title: "PM10",
-      unit: "µg/m³",
-      icon: Cloud,
-      color: "#1976d2",
-    },
-    {
-      key: "atmp",
-      title: "Temperature",
-      unit: "°C",
-      icon: Thermostat,
-      color: "#ff9800",
-    },
-    {
-      key: "rhum",
-      title: "Humidity",
-      unit: "%",
-      icon: WaterDrop,
-      color: "#2196f3",
-    },
-    {
-      key: "rco2",
-      title: "CO₂",
-      unit: "ppm",
-      icon: Factory,
-      color: "#e53935",
-    },
-    {
-      key: "tvoc",
-      title: "TVOC",
-      unit: "ppb",
-      icon: InfoOutlined,
-      color: "#795548",
-    },
-  ];
-
   return (
     <Box sx={{ p: 3, minHeight: "100vh", backgroundColor: "#f5f5f5" }}>
       {/* Charts Section using Grid */}
-      <Grid container justifyContent="center" sx={{ mb: 4, alignItems: "center" }}>
+      <Grid
+        container
+        justifyContent="center"
+        sx={{ mb: 4, alignItems: "center" }}
+      >
         {/* View 2D Model Button */}
         <Grid item xs={12} sx={{ textAlign: "center", mb: 2 }}>
           <Button
@@ -309,7 +507,13 @@ const Dashboard = () => {
             </Typography>
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
-                <Pie data={energySources} cx="50%" cy="50%" outerRadius={100} dataKey="value">
+                <Pie
+                  data={energySources}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  dataKey="value"
+                >
                   {energySources.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
@@ -331,15 +535,23 @@ const Dashboard = () => {
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="electrical" fill="#4caf50" name="Electrical (kWh)" />
-                <Bar dataKey="machineUsage" fill="#009688" name="Machine Usage (%)" />
+                <Bar
+                  dataKey="electrical"
+                  fill="#4caf50"
+                  name="Electrical (kWh)"
+                />
+                <Bar
+                  dataKey="machineUsage"
+                  fill="#009688"
+                  name="Machine Usage (%)"
+                />
               </BarChart>
             </ResponsiveContainer>
           </Box>
         </Grid>
       </Grid>
 
-      {/* Metric Cards Section (Now only using the remaining dummy metrics) */}
+      {/* Metric Cards Section */}
       <Grid container spacing={3}>
         {metricsConfig.map(({ key, title, unit, color, icon: Icon }) => (
           <Grid item xs={12} md={3} key={key}>
@@ -349,6 +561,7 @@ const Dashboard = () => {
               unit={unit}
               color={color}
               icon={Icon}
+              graphData={metricsHistory[key] || []}
             />
           </Grid>
         ))}
@@ -366,6 +579,7 @@ const Dashboard = () => {
                 color={reading.color}
                 icon={reading.icon}
                 updateKey={sensorUpdate}
+                graphData={sensorHistory[reading.key] || []}
               />
             </Grid>
           ))}
