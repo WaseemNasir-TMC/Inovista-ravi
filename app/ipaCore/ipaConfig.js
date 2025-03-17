@@ -1,7 +1,7 @@
 const ipaConfig = {
-  appName: "TMC-Training-Twinit",
+  appName: "innovista-ravi",
   configUserType: "dev-train",
-  applicationId: "77b2cdca-c1a3-4d27-9d19-7b5358e3b337",
+  applicationId: "fb99b33f-964d-4c8e-ae86-9230a93bba3d",
   scriptPlugins: [],
   css: [],
   redux: {
@@ -16,6 +16,5 @@ const ipaConfig = {
     entityAction: [],
   },
 };
-
 
 export default ipaConfig;
