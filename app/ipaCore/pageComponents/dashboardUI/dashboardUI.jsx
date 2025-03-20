@@ -116,7 +116,7 @@ const MetricCard = ({ title, value, unit, color, icon: Icon, data }) => (
           {title}
         </Typography>
       </Box>
-      <Typography variant="h4" component="div" sx={{ color, mb: 1 }}>
+      <Typography variant="h5" component="div" sx={{ color, mb: 1 }}>
         {value.toLocaleString()} {unit}
       </Typography>
       <Typography variant="body2" color="text.secondary">

@@ -183,7 +183,7 @@ const MetricCard = ({ title, value, unit, color, icon: Icon, graphData }) => (
         </IconButton>
       </Box>
       <Fade in={true} key={value} timeout={500}>
-        <Typography variant="h4" sx={{ color, mb: 1, fontWeight: "bold" }}>
+        <Typography variant="h5" sx={{ color, mb: 1, fontWeight: "bold" }}>
           {value.toFixed(2)} {unit}
         </Typography>
       </Fade>
@@ -223,80 +223,6 @@ const MetricCard = ({ title, value, unit, color, icon: Icon, graphData }) => (
   </Card>
 );
 
-// ** Sensor Reading Card Component with Graph **
-// const SensorReadingCard = ({
-//   title,
-//   value,
-//   unit,
-//   color,
-//   icon: Icon,
-//   updateKey,
-//   graphData,
-// }) => (
-//   <Card
-//     sx={{
-//       height: "100%",
-//       display: "flex",
-//       flexDirection: "column",
-//       p: 2,
-//       borderRadius: 2,
-//       boxShadow: 3,
-//       transition: "all 0.3s",
-//       ":hover": { transform: "scale(1.03)", boxShadow: 5 },
-//     }}
-//   >
-//     <CardContent>
-//       <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-//         <Icon sx={{ color, mr: 1 }} />
-//         <Typography variant="h6">{title}</Typography>
-//         <IconButton sx={{ ml: "auto" }}>
-//           <InfoOutlined fontSize="small" />
-//         </IconButton>
-//       </Box>
-//       <Fade in={true} key={updateKey} timeout={500}>
-//         <Typography variant="h4" sx={{ color, mb: 1, fontWeight: "bold" }}>
-//           {value !== undefined && value !== null ? value.toFixed(2) : "N/A"}{" "}
-//           {unit}
-//         </Typography>
-//       </Fade>
-//       <Box style={{ marginTop: "auto" }}>
-//         <ResponsiveContainer width="100%" height={100}>
-//           <AreaChart data={graphData}>
-//             <defs>
-//               <filter
-//                 id={`shadow-sensor-${title}`}
-//                 x="-20%"
-//                 y="-20%"
-//                 width="140%"
-//                 height="140%"
-//               >
-//                 <feDropShadow
-//                   dx="2"
-//                   dy="2"
-//                   stdDeviation="3"
-//                   floodColor={color}
-//                   floodOpacity={0.5}
-//                 />
-//               </filter>
-//             </defs>
-//             <Area
-//               type="monotone"
-//               dataKey="value"
-//               stroke={color}
-//               fill={color}
-//               strokeWidth={2}
-//               fillOpacity={0.3}
-//               style={{ filter: `url(#shadow-sensor-${title})` }}
-//             />
-//             <XAxis hide />
-//             <YAxis hide />
-//           </AreaChart>
-//         </ResponsiveContainer>{" "}
-//       </Box>
-//     </CardContent>
-//   </Card>
-// );
-
 const SensorReadingCard = ({
   title,
   value,
@@ -328,7 +254,7 @@ const SensorReadingCard = ({
       </Box>
       <Fade in={true} key={updateKey} timeout={500}>
         <Typography
-          variant="h4"
+          variant="h5"
           sx={{ color, mb: 1, fontWeight: "bold" }}
         >
           {value !== undefined && value !== null ? value.toFixed(2) : "N/A"}{" "}
