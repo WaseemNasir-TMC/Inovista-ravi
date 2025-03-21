@@ -25,7 +25,7 @@ const cardData = [
     title: "Immersive City Tour",
     image: PackagesMall,
     link: "#",
-    route: "#/",
+    route: "#/dashboardUI",
   },
   //   { id: 3, title: "Mobile Assets", image: "/path/to/floorplan-image.jpg", link: "#", route: "#/mainPage" },
 ];
