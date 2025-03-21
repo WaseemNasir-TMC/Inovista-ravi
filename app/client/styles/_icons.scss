@@ -99,3 +99,9 @@
     }
   }
 }
+#SidePanelContent {
+  background: white !important;
+}
+div:has(> nav) {
+  display:none
+}

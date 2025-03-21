@@ -1,16 +1,17 @@
-import { render } from 'react-dom';
-import React from 'react';
-import _ from 'lodash'
-import {IafProj, IafSession} from '@dtplatform/platform-api';
-import { AliveScope } from 'react-activation';
-import {IpaMainLayout} from '@invicara/ipa-core/modules/IpaLayouts';
-import ipaConfig from '../ipaCore/ipaConfig'
-import './styles/app.scss'
+import { render } from "react-dom";
+import React from "react";
+import _ from "lodash";
+import { IafProj, IafSession } from "@dtplatform/platform-api";
+import { AliveScope } from "react-activation";
+import { IpaMainLayout } from "@invicara/ipa-core/modules/IpaLayouts";
+import ipaConfig from "../ipaCore/ipaConfig";
+import "./styles/app.scss";
+import SidebarDrawerWrapper from "../components/SidebarDrawerWrapper";
 
 const onConfigLoad = async (store, userConfig, AppContext) => {
-  console.log('onConfigLoad ->', AppContext, store, userConfig)
-  
-  IafSession.setConfig(endPointConfig)
+  console.log("onConfigLoad ->", AppContext, store, userConfig);
+
+  IafSession.setConfig(endPointConfig);
 
   // const isValidModel = (model) => {
 
@@ -26,7 +27,7 @@ const onConfigLoad = async (store, userConfig, AppContext) => {
   //   return result;
 
   // }
-  
+
   // let selectedModel = {};
   // let selectedProj = IafProj.getCurrent();
   //  //load the model
@@ -53,17 +54,20 @@ const onConfigLoad = async (store, userConfig, AppContext) => {
   // }else{
   //     AppContext.actions.setSelectedItems({selectedModel: null});
   // }
-  
-}
+};
 
-render(<AliveScope>
+render(
+  <AliveScope>
+    <>
+      <SidebarDrawerWrapper />
       <IpaMainLayout
-          ipaConfig={ipaConfig}
-          onConfigLoad={onConfigLoad}
-          //bottomPanelContent={EntityEnabledIafViewer} //TODO Do we really need this viewer? It isn't being used anywhere...
+        ipaConfig={ipaConfig}
+        onConfigLoad={onConfigLoad}
+        //bottomPanelContent={EntityEnabledIafViewer} //TODO Do we really need this viewer? It isn't being used anywhere...
       />
-    </AliveScope>,
-    document.getElementById('app')
+    </>
+  </AliveScope>,
+  document.getElementById("app")
 );
 
 if (module.hot) {
